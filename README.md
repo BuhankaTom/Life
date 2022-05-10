@@ -1,3 +1,3 @@
 # Life
  Implementation of "Conway's Game of Life" in C# framework Windows Forms
-![Screenshot](Images\1.png)
+![Screenshot](https://raw.githubusercontent.com/BuhankaTom/Life/main/Images/1.png)
