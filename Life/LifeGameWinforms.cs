@@ -18,8 +18,8 @@ namespace Life
         public Bitmap ResizedBitmap { get; }
         protected Graphics G { get; }
 
-        public LifeGameWinforms(int width, int height, int cellSize, Color alive, Color dead) :
-            base(width, height)
+        public LifeGameWinforms(int width, int height, LifeGameRules rules, int cellSize, Color alive, Color dead) :
+            base(width, height, rules)
         {
             CellSize = cellSize;
             ResizedBitmap = new Bitmap(Width * CellSize, Height * CellSize);

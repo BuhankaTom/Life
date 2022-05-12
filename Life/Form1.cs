@@ -4,24 +4,28 @@ namespace Life
     {
         public Color AliveColorNext { get; private set; }
         public Color DeadColorNext { get; private set; }
+        public LifeGameRules Rules { get; set; }
 
         public bool IsStarted { get => UpdateTimer.Enabled; private set => UpdateTimer.Enabled = value; }
 
-        public LifeGameWinforms? Map { get; private set; }
+        public LifeGameWinforms? Game { get; private set; }
 
         public Form1()
         {
             InitializeComponent();
             AliveColorNext = Color.FromArgb(192, 0, 0);
             DeadColorNext = Color.Black;
+            Rules = LifeGameRulesPresets.Default;
+            SelectRulesDropDown.SelectedIndex = 0;
         }
 
         private void ImageUpdateTick(object sender, EventArgs e)
         {
-            if (Map is not null)
+            if (Game is not null)
             {
-                Map.NextGeneration();
-                MainCanvas.Invoke(() => MainCanvas.Refresh());
+                Game.NextGeneration();
+                MainCanvas.Refresh();
+                Text = $"Conway's Game of Life | Generation {Game.Generation}";
             }
         }
 
@@ -31,9 +35,9 @@ namespace Life
             if (color is not null)
             {
                 AliveColorNext = color ?? Color.Black;
-                if (Map is not null)
+                if (Game is not null)
                 {
-                    Map.AliveColor = AliveColorNext;
+                    Game.AliveColor = AliveColorNext;
                 }
             }
         }
@@ -44,9 +48,9 @@ namespace Life
             if (color is not null)
             {
                 DeadColorNext = color ?? Color.Black;
-                if (Map is not null)
+                if (Game is not null)
                 {
-                    Map.DeadColor = DeadColorNext;
+                    Game.DeadColor = DeadColorNext;
                 }
                 MainCanvas.BackColor = color ?? Color.Black;
             }
@@ -65,16 +69,16 @@ namespace Life
         private void CreateButtonClick(object sender, EventArgs e)
         {
             int cellSize = (int)CellSizeUpDown.Value;
-            Map = new(MainCanvas.Width / cellSize, MainCanvas.Height / cellSize, cellSize, AliveColorNext, DeadColorNext);
-            Map.GenerateRandom((int)FrequencyUpDown.Value, (int)FrequencyUpDown.Maximum);
+            Game = new(MainCanvas.Width / cellSize, MainCanvas.Height / cellSize, Rules, cellSize, AliveColorNext, DeadColorNext);
+            Game.GenerateRandom((int)FrequencyUpDown.Value, (int)FrequencyUpDown.Maximum);
             MainCanvas.Image?.Dispose();
-            MainCanvas.Image = Map.ResizedBitmap;
+            MainCanvas.Image = Game.ResizedBitmap;
             UpdateTimer.Start();
         }
 
         private void StartButton_Click(object sender, EventArgs e)
         {
-            if (Map is not null)
+            if (Game is not null)
             {
                 UpdateTimer.Start();
             }
@@ -85,14 +89,62 @@ namespace Life
             UpdateTimer.Stop();
         }
 
-        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
+        private void MainCanvasDraw(object sender, MouseEventArgs e)
         {
-            if (Map is not null && e.Button != MouseButtons.None)
+            if (Game is not null && e.Button != MouseButtons.None)
             {
-                int x = e.Location.X / Map.CellSize;
-                int y = e.Location.Y / Map.CellSize;
-                Map.SetCellAndDraw(x, y, e.Button == MouseButtons.Left);
+                int x = e.Location.X / Game.CellSize;
+                int y = e.Location.Y / Game.CellSize;
+                Game.SetCellAndDraw(x, y, e.Button == MouseButtons.Left);
                 MainCanvas.Refresh();
+            }
+        }
+
+        private void ChangeRulesButton_Click(object sender, EventArgs e)
+        {
+            if (Rules is LifeGameRulesCustom rules)
+            {
+                RulesDialog dialog = new(rules);
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    SelectRulesDropDown.SelectedIndex = 5;
+                    SetRules(rules);
+                }
+            }
+            else
+            {
+                MessageBox.Show("This rules can not be modified");
+            }
+        }
+
+        private void SelectRulesDropDown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (SelectRulesDropDown.SelectedIndex)
+            {
+                case 0:
+                    SetRules(LifeGameRulesPresets.Default);
+                    break;
+                case 1:
+                    SetRules(LifeGameRulesPresets.DayAndNight);
+                    break;
+                case 2:
+                    SetRules(LifeGameRulesPresets.HighLife);
+                    break;
+                case 3:
+                    SetRules(LifeGameRulesPresets.LifeWithoutDeath);
+                    break;
+                case 4:
+                    SetRules(LifeGameRulesPresets.Seeds);
+                    break;
+            }
+        }
+
+        private void SetRules(LifeGameRules rules)
+        {
+            Rules = rules;
+            if (Game is not null)
+            {
+                Game.Rules = Rules;
             }
         }
     }

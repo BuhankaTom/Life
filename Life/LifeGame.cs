@@ -12,14 +12,19 @@ namespace Life
         public int Height { get; }
         public int FrequencyMax { get; }
         public int Frequency { get; }
+        public LifeGameRules Rules { get; set; }
+        public int Generation { get; private set; }
 
         protected WrapVector<bool> Cells { get; set; }
+        private WrapVector<bool> PreviousCells { get; set; }
 
-        public LifeGame(int width, int height)
+        public LifeGame(int width, int height, LifeGameRules rules)
         {
             Width = width;
             Height = height;
             Cells = new(Width, Height);
+            PreviousCells = new(Width, Height);
+            Rules = rules;
         }
 
         public virtual void GenerateRandom(int frequency, int maxFrequency)
@@ -36,8 +41,8 @@ namespace Life
 
         public virtual void NextGeneration()
         {
-            WrapVector<bool> nextCells = new(Width, Height);
-
+            (Cells, PreviousCells) = (PreviousCells, Cells);
+            Generation++;
             ClearCanvas();
             
             for (int x = 0; x < Width; x++)
@@ -46,32 +51,24 @@ namespace Life
                 {
                     bool[] neighbours = new bool[8]
                     {
-                        Cells[x + 1, y + 1],
-                        Cells[x - 1, y + 1],
-                        Cells[x + 1, y - 1],
-                        Cells[x - 1, y - 1],
-                        Cells[x + 1, y],
-                        Cells[x - 1, y],
-                        Cells[x, y + 1],
-                        Cells[x, y - 1],
+                        PreviousCells[x + 1, y + 1],
+                        PreviousCells[x - 1, y + 1],
+                        PreviousCells[x + 1, y - 1],
+                        PreviousCells[x - 1, y - 1],
+                        PreviousCells[x + 1, y],
+                        PreviousCells[x - 1, y],
+                        PreviousCells[x, y + 1],
+                        PreviousCells[x, y - 1],
                     };
                     int count = neighbours.Count((bool a) => a);
+                    bool changes = Rules.DoesCellChange(PreviousCells[x, y], count);
+                    Cells[x, y] = changes ? !PreviousCells[x, y] : PreviousCells[x, y];
                     if (Cells[x, y])
                     {
-                        if (count == 2 || count == 3)
-                        {
-                            nextCells[x, y] = true;
-                            DrawCellOnCanvas(x, y, true);
-                        }
-                    }
-                    else if (count == 3)
-                    {
-                        nextCells[x, y] = true;
                         DrawCellOnCanvas(x, y, true);
                     }
                 }
             }
-            Cells = nextCells;
         }
 
         public virtual void SetCell(int x, int y, bool alive)

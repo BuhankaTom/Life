@@ -30,6 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.SelectRulesDropDown = new System.Windows.Forms.ComboBox();
+            this.ChangeRulesButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -51,6 +54,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.SelectRulesDropDown);
+            this.groupBox1.Controls.Add(this.ChangeRulesButton);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.button1);
@@ -69,10 +75,46 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(101, 135);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 15);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Rules";
+            // 
+            // SelectRulesDropDown
+            // 
+            this.SelectRulesDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SelectRulesDropDown.FormattingEnabled = true;
+            this.SelectRulesDropDown.Items.AddRange(new object[] {
+            "Conway\'s Game of Life",
+            "Day & Night",
+            "HighLife",
+            "Life without Death",
+            "Seeds",
+            "Custom"});
+            this.SelectRulesDropDown.Location = new System.Drawing.Point(15, 161);
+            this.SelectRulesDropDown.Name = "SelectRulesDropDown";
+            this.SelectRulesDropDown.Size = new System.Drawing.Size(149, 23);
+            this.SelectRulesDropDown.TabIndex = 11;
+            this.SelectRulesDropDown.SelectedIndexChanged += new System.EventHandler(this.SelectRulesDropDown_SelectedIndexChanged);
+            // 
+            // ChangeRulesButton
+            // 
+            this.ChangeRulesButton.Location = new System.Drawing.Point(170, 161);
+            this.ChangeRulesButton.Name = "ChangeRulesButton";
+            this.ChangeRulesButton.Size = new System.Drawing.Size(69, 24);
+            this.ChangeRulesButton.TabIndex = 10;
+            this.ChangeRulesButton.Text = "Edit";
+            this.ChangeRulesButton.UseVisualStyleBackColor = true;
+            this.ChangeRulesButton.Click += new System.EventHandler(this.ChangeRulesButton_Click);
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(39, 99);
+            this.label3.Location = new System.Drawing.Point(39, 215);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 15);
             this.label3.TabIndex = 9;
@@ -80,7 +122,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(26, 152);
+            this.button2.Location = new System.Drawing.Point(26, 268);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(69, 23);
             this.button2.TabIndex = 8;
@@ -91,7 +133,7 @@
             // button1
             // 
             this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.button1.Location = new System.Drawing.Point(26, 125);
+            this.button1.Location = new System.Drawing.Point(26, 241);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(69, 23);
             this.button1.TabIndex = 7;
@@ -101,7 +143,7 @@
             // 
             // CreateButton
             // 
-            this.CreateButton.Location = new System.Drawing.Point(26, 191);
+            this.CreateButton.Location = new System.Drawing.Point(26, 94);
             this.CreateButton.Name = "CreateButton";
             this.CreateButton.Size = new System.Drawing.Size(69, 23);
             this.CreateButton.TabIndex = 6;
@@ -193,7 +235,8 @@
             this.MainCanvas.Size = new System.Drawing.Size(1228, 761);
             this.MainCanvas.TabIndex = 1;
             this.MainCanvas.TabStop = false;
-            this.MainCanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainCanvas_MouseMove);
+            this.MainCanvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainCanvasDraw);
+            this.MainCanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainCanvasDraw);
             // 
             // UpdateTimer
             // 
@@ -235,5 +278,8 @@
         private Label label3;
         private Button button2;
         private Button button1;
+        private Button ChangeRulesButton;
+        private Label label4;
+        private ComboBox SelectRulesDropDown;
     }
 }
